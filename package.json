@@ -1,0 +1,36 @@
+{
+  "name": "openfoodfacts-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Open Food Facts",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "off-mcp-server": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-esm src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:jest": "jest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "axios": "^1.6.7",
+    "express": "^4.18.2",
+    "glob": "^10.3.10",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^3.1.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vitest": "^3.1.1"
+  }
+}
