@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 // Define prompts related to food product information
 export const PROMPTS = {
-    // Product analysis prompts
+    // Product analysis prompts - standard mode (available to all users)
     "analyze-product": {
         name: "analyze-product",
         description: "Analyze a food product based on its barcode",
@@ -42,10 +42,11 @@ export const PROMPTS = {
             }
         ]
     },
-    // Developer-focused prompts
+    // Developer-focused prompts - only available in developer mode
     "debug-perl-code": {
         name: "debug-perl-code",
         description: "Get help debugging Perl code in the Open Food Facts codebase",
+        developerOnly: true,
         arguments: [
             {
                 name: "errorMessage",
@@ -62,6 +63,7 @@ export const PROMPTS = {
     "explain-codebase-structure": {
         name: "explain-codebase-structure",
         description: "Explain the structure and organization of the Open Food Facts codebase",
+        developerOnly: true,
         arguments: [
             {
                 name: "component",
@@ -73,6 +75,7 @@ export const PROMPTS = {
     "implement-feature": {
         name: "implement-feature",
         description: "Get guidance on implementing a new feature in Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "featureDescription",
@@ -89,6 +92,7 @@ export const PROMPTS = {
     "optimize-mongodb-query": {
         name: "optimize-mongodb-query",
         description: "Get suggestions to optimize MongoDB queries for better performance",
+        developerOnly: true,
         arguments: [
             {
                 name: "query",
@@ -100,6 +104,7 @@ export const PROMPTS = {
     "refactor-code": {
         name: "refactor-code",
         description: "Get suggestions on refactoring code for better readability and maintainability",
+        developerOnly: true,
         arguments: [
             {
                 name: "filePath",
@@ -116,6 +121,7 @@ export const PROMPTS = {
     "create-unit-test": {
         name: "create-unit-test",
         description: "Generate a unit test for a specific function or module",
+        developerOnly: true,
         arguments: [
             {
                 name: "functionName",
@@ -132,6 +138,7 @@ export const PROMPTS = {
     "review-pr": {
         name: "review-pr",
         description: "Get help reviewing a pull request",
+        developerOnly: true,
         arguments: [
             {
                 name: "prDescription",
@@ -148,6 +155,7 @@ export const PROMPTS = {
     "investigate-bug": {
         name: "investigate-bug",
         description: "Systematic approach to investigate a bug in the codebase",
+        developerOnly: true,
         arguments: [
             {
                 name: "bugDescription",
@@ -180,6 +188,7 @@ export const PROMPTS = {
     "document-code": {
         name: "document-code",
         description: "Generate documentation for code or functions",
+        developerOnly: true,
         arguments: [
             {
                 name: "filePath",
@@ -197,6 +206,7 @@ export const PROMPTS = {
     "docker-debug-guide": {
         name: "docker-debug-guide",
         description: "Get help with Docker-related debugging tasks in Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "issue",
@@ -208,6 +218,7 @@ export const PROMPTS = {
     "enhance-packaging-data": {
         name: "enhance-packaging-data",
         description: "Get guidance on working with packaging data structure in Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "component",
@@ -224,6 +235,7 @@ export const PROMPTS = {
     "contribute-knowledge-panel": {
         name: "contribute-knowledge-panel",
         description: "Get guidance on creating or modifying knowledge panels",
+        developerOnly: true,
         arguments: [
             {
                 name: "panelType",
@@ -240,6 +252,7 @@ export const PROMPTS = {
     "setup-dev-environment": {
         name: "setup-dev-environment",
         description: "Get help setting up or troubleshooting your development environment",
+        developerOnly: true,
         arguments: [
             {
                 name: "flavor",
@@ -256,6 +269,7 @@ export const PROMPTS = {
     "mongodb-query-help": {
         name: "mongodb-query-help",
         description: "Get help with MongoDB queries for Open Food Facts data",
+        developerOnly: true,
         arguments: [
             {
                 name: "collection",
@@ -277,6 +291,7 @@ export const PROMPTS = {
     "data-quality-control": {
         name: "data-quality-control",
         description: "Get guidance on implementing data quality controls for Open Food Facts contributions",
+        developerOnly: true,
         arguments: [
             {
                 name: "dataType",
@@ -293,6 +308,7 @@ export const PROMPTS = {
     "taxonomy-guide": {
         name: "taxonomy-guide",
         description: "Get guidance on working with Open Food Facts taxonomies",
+        developerOnly: true,
         arguments: [
             {
                 name: "taxonomyName",
@@ -309,6 +325,7 @@ export const PROMPTS = {
     "perl-debugging": {
         name: "perl-debugging",
         description: "Get help with debugging Perl code in the Product Opener codebase",
+        developerOnly: true,
         arguments: [
             {
                 name: "module",
@@ -330,6 +347,7 @@ export const PROMPTS = {
     "apache-config-help": {
         name: "apache-config-help",
         description: "Get help with Apache configuration for Open Food Facts server",
+        developerOnly: true,
         arguments: [
             {
                 name: "issue",
@@ -341,6 +359,7 @@ export const PROMPTS = {
     "implement-api-endpoint": {
         name: "implement-api-endpoint",
         description: "Get guidance on implementing a new API endpoint",
+        developerOnly: true,
         arguments: [
             {
                 name: "endpoint",
@@ -363,6 +382,7 @@ export const PROMPTS = {
     "setup-local-environment": {
         name: "setup-local-environment",
         description: "Get step-by-step help setting up a local development environment for Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "os",
@@ -379,6 +399,7 @@ export const PROMPTS = {
     "docker-makefile-help": {
         name: "docker-makefile-help",
         description: "Get help with Docker and Makefile commands for Open Food Facts development",
+        developerOnly: true,
         arguments: [
             {
                 name: "command",
@@ -395,6 +416,7 @@ export const PROMPTS = {
     "resolve-common-setup-errors": {
         name: "resolve-common-setup-errors",
         description: "Get solutions for common errors encountered during project setup",
+        developerOnly: true,
         arguments: [
             {
                 name: "errorType",
@@ -411,6 +433,7 @@ export const PROMPTS = {
     "gitpod-workflow": {
         name: "gitpod-workflow",
         description: "Get help with using Gitpod for Open Food Facts development",
+        developerOnly: true,
         arguments: [
             {
                 name: "issue",
@@ -422,6 +445,7 @@ export const PROMPTS = {
     "development-workflows": {
         name: "development-workflows",
         description: "Get guidance on common development workflows for Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "workflow",
@@ -434,6 +458,7 @@ export const PROMPTS = {
     "api-authentication-guide": {
         name: "api-authentication-guide",
         description: "Get help with API authentication for Open Food Facts",
+        developerOnly: true,
         arguments: [
             {
                 name: "operation",
@@ -450,6 +475,7 @@ export const PROMPTS = {
     "api-image-operations": {
         name: "api-image-operations",
         description: "Get guidance on handling product images with the Open Food Facts API",
+        developerOnly: true,
         arguments: [
             {
                 name: "operation",
@@ -466,6 +492,7 @@ export const PROMPTS = {
     "api-country-language-usage": {
         name: "api-country-language-usage",
         description: "Get help with country and language parameters in the Open Food Facts API",
+        developerOnly: true,
         arguments: [
             {
                 name: "useCase",
@@ -477,6 +504,7 @@ export const PROMPTS = {
     "product-data-contribution": {
         name: "product-data-contribution",
         description: "Get guidance on contributing product data through the API",
+        developerOnly: true,
         arguments: [
             {
                 name: "dataType",
@@ -493,6 +521,7 @@ export const PROMPTS = {
     "search-api-usage": {
         name: "search-api-usage",
         description: "Get help with using the Open Food Facts search API",
+        developerOnly: true,
         arguments: [
             {
                 name: "searchType",
@@ -509,6 +538,7 @@ export const PROMPTS = {
     "api-response-fields-guide": {
         name: "api-response-fields-guide",
         description: "Get explanation of specific API response fields",
+        developerOnly: true,
         arguments: [
             {
                 name: "fieldGroup",
@@ -520,6 +550,7 @@ export const PROMPTS = {
     "api-error-troubleshooting": {
         name: "api-error-troubleshooting",
         description: "Troubleshoot API errors you're encountering",
+        developerOnly: true,
         arguments: [
             {
                 name: "statusCode",
@@ -536,6 +567,7 @@ export const PROMPTS = {
     "caching-api-data": {
         name: "caching-api-data",
         description: "Get guidance on efficiently caching Open Food Facts data",
+        developerOnly: true,
         arguments: [
             {
                 name: "dataType",
@@ -552,6 +584,14 @@ export const PROMPTS = {
 };
 // Export the available prompts for listing
 export const availablePrompts = Object.values(PROMPTS);
+/**
+ * Filter prompts to only include those available in standard mode (non-developer mode)
+ * @param prompts List of prompts to filter
+ * @returns Filtered prompts that are available in standard mode
+ */
+export function filterPromptsForStandardMode(prompts) {
+    return prompts.filter(prompt => !prompt.developerOnly);
+}
 /**
  * Try to read file content from a given path relative to project root
  */

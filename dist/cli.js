@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { startServer } from './server.js';
-import { logger } from './transport/transports.js';
 // Parse command line arguments
 const args = process.argv.slice(2);
 const options = {};
@@ -19,19 +18,26 @@ if (options.transport) {
 if (options.port) {
     process.env.PORT = options.port;
 }
-// Start the server
-logger.info('Starting Open Food Facts MCP server...');
-if (options.transport) {
-    logger.info(`Transport mode: ${options.transport}`);
+// Set developer mode from command line flag
+const developerMode = !!options.developer;
+if (developerMode) {
+    process.env.DEVELOPER_MODE = 'true';
 }
-// Display enabled capabilities
-logger.info('Enabled capabilities:');
-logger.info('- Resources: Food product data access');
-logger.info('- Tools: Food product search and information');
-logger.info('- Prompts: Food product analysis templates');
-logger.info('- Sampling: AI-powered food product analysis');
-logger.info('- Roots: Resource boundary management');
-startServer().catch((error) => {
-    logger.error('Failed to start MCP server:', error);
+console.log('Starting Open Food Facts MCP server...');
+if (options.transport) {
+    console.log(`Transport mode: ${options.transport}`);
+}
+console.log(`Mode: ${developerMode ? 'Developer (all tools enabled)' : 'Standard (core tools only)'}`);
+console.log('Enabled capabilities:');
+console.log('- Resources: Food product data access');
+console.log('- Tools: Food product search and information');
+console.log('- Prompts: Food product analysis templates');
+console.log('- Sampling: AI-powered food product analysis');
+console.log('- Roots: Resource boundary management');
+if (developerMode) {
+    console.log('- Developer Tools: Code analysis, PR generation, and contributor assistance');
+}
+startServer(developerMode).catch((error) => {
+    console.error('Failed to start MCP server:', error);
     process.exit(1);
 });

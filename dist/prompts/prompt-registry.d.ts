@@ -1,16 +1,15 @@
 import { Prompt } from "@modelcontextprotocol/sdk/types.js";
-export declare const PROMPTS: Record<string, Prompt>;
-export declare const availablePrompts: {
-    [x: string]: unknown;
-    name: string;
-    description?: string | undefined;
-    arguments?: {
-        [x: string]: unknown;
-        name: string;
-        description?: string | undefined;
-        required?: boolean | undefined;
-    }[] | undefined;
-}[];
+interface ExtendedPrompt extends Prompt {
+    developerOnly?: boolean;
+}
+export declare const PROMPTS: Record<string, ExtendedPrompt>;
+export declare const availablePrompts: ExtendedPrompt[];
+/**
+ * Filter prompts to only include those available in standard mode (non-developer mode)
+ * @param prompts List of prompts to filter
+ * @returns Filtered prompts that are available in standard mode
+ */
+export declare function filterPromptsForStandardMode(prompts: ExtendedPrompt[]): ExtendedPrompt[];
 export declare function getPromptMessages(promptName: string, args?: Record<string, string>): Promise<{
     role: string;
     content: {
@@ -18,3 +17,4 @@ export declare function getPromptMessages(promptName: string, args?: Record<stri
         text: string;
     };
 }[]>;
+export {};

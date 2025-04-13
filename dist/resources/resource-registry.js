@@ -9,11 +9,6 @@ import { rootsRegistry } from "../roots/index.js";
  */
 export const availableResources = [
     {
-        uri: "openfoodfacts://structure/",
-        name: "Project Structure",
-        description: "Navigate the directory structure of the Open Food Facts codebase"
-    },
-    {
         uri: "openfoodfacts://info",
         name: "Project Information",
         description: "Overview of the Open Food Facts project and its components",
@@ -30,34 +25,61 @@ export const availableResources = [
         description: "Documentation of the Open Food Facts API endpoints"
     },
     {
-        uri: "openfoodfacts://code-patterns",
-        name: "Code Patterns",
-        description: "Common patterns and conventions in the Open Food Facts codebase"
-    },
-    {
-        uri: "openfoodfacts://file-organization",
-        name: "File Organization",
-        description: "How files are organized in the Open Food Facts project"
-    },
-    {
         uri: "openfoodfacts://taxonomy/categories",
         name: "Categories Taxonomy",
         description: "Food categories taxonomy used in Open Food Facts"
     },
+    // Developer-specific resources - only available in developer mode
+    {
+        uri: "openfoodfacts://structure/",
+        name: "Project Structure",
+        description: "Navigate the directory structure of the Open Food Facts codebase",
+        developerOnly: true
+    },
+    {
+        uri: "openfoodfacts://code-patterns",
+        name: "Code Patterns",
+        description: "Common patterns and conventions in the Open Food Facts codebase",
+        developerOnly: true
+    },
+    {
+        uri: "openfoodfacts://file-organization",
+        name: "File Organization",
+        description: "How files are organized in the Open Food Facts project",
+        developerOnly: true
+    },
     {
         uri: "openfoodfacts://template/",
         name: "Resource Templates",
-        description: "Templates for common Open Food Facts development tasks"
+        description: "Templates for common Open Food Facts development tasks",
+        developerOnly: true
     }
 ];
 /**
+ * Filter resources based on developer mode
+ * @param resources List of resources to filter
+ * @returns Filtered resources based on developer mode
+ */
+export function filterResourcesForStandardMode(resources) {
+    return resources.filter(resource => !resource.developerOnly);
+}
+/**
  * Check if a resource URI is accessible based on current roots
+ * and developer mode
  *
  * @param uri The resource URI to check
+ * @param developerMode Whether developer mode is enabled
  * @returns True if the resource is accessible, false otherwise
  */
-function isResourceAccessible(uri) {
-    // OpenFoodFacts specific URIs are always accessible
+function isResourceAccessible(uri, developerMode = false) {
+    // If not in developer mode, check if the resource is developer-only
+    if (!developerMode) {
+        const resource = availableResources.find(r => r.uri === uri || uri.startsWith(r.uri));
+        if (resource && resource.developerOnly) {
+            return false;
+        }
+    }
+    // OpenFoodFacts specific URIs are always accessible if they pass the developer mode check
     if (uri.startsWith('openfoodfacts://')) {
         return true;
     }
@@ -67,16 +89,17 @@ function isResourceAccessible(uri) {
 /**
  * Route a resource request to the appropriate handler
  * @param uri The resource URI
+ * @param developerMode Whether developer mode is enabled
  * @returns Response for the requested resource
  */
-export async function routeResourceRequest(uri) {
+export async function routeResourceRequest(uri, developerMode = false) {
     const url = new URL(uri);
-    // Check if the resource is accessible based on defined roots
-    if (!isResourceAccessible(uri)) {
+    // Check if the resource is accessible based on defined roots and developer mode
+    if (!isResourceAccessible(uri, developerMode)) {
         return {
             contents: [{
                     uri,
-                    text: `Access denied: The requested resource is not within any defined root`,
+                    text: `Access denied: The requested resource is either not within any defined root or requires developer mode`,
                     isError: true
                 }]
         };

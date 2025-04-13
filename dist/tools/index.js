@@ -163,18 +163,21 @@ async function findProduct(nameOrBarcode) {
 /**
  * Register all tools with the MCP server
  * @param server The MCP server instance
+ * @param developerMode Whether to enable developer-specific tools
  */
-export function registerTools(server) {
+export function registerTools(server, developerMode = false) {
     // Wrap the server.tool method to track all registered tools
     wrapMcpServerTool(server);
-    // Register AI analysis tools (these use sampling)
+    // Always register core food-related tools
     registerAIAnalysisTools(server);
-    // Register GitHub issues analysis tools
-    registerGitHubIssuesTools(server);
+    // Only register GitHub issue analysis tools in developer mode
+    if (developerMode) {
+        registerGitHubIssuesTools(server);
+    }
     // Define available tools
     server.server.setRequestHandler(ListToolsRequestSchema, async () => {
-        // Set 1 tools - explicitly defined here
-        const explicitTools = [
+        // Set 1 tools - core food product tools that are always available
+        const coreProductTools = [
             {
                 name: "searchProducts",
                 description: "Search for products in the Open Food Facts database by name, brand, category, or other keywords",
@@ -293,8 +296,10 @@ export function registerTools(server) {
                     idempotentHint: true,
                     openWorldHint: true
                 }
-            },
-            // Add GitHub tools to make them visible in the MCP Inspector
+            }
+        ];
+        // GitHub development tools - only available in developer mode
+        const developerTools = developerMode ? [
             {
                 name: "analyzeGitHubIssue",
                 description: "Analyze a specific GitHub issue from Open Food Facts repositories using AI",
@@ -387,14 +392,18 @@ export function registerTools(server) {
                     openWorldHint: true
                 }
             }
-        ];
-        // Combine explicit tools (Set 1) with dynamically registered tools (Set 2)
+        ] : [];
+        // Combine core tools with conditionally-included developer tools
+        const explicitTools = [...coreProductTools, ...developerTools];
+        // Combine all tools - include dynamically registered tools only in developer mode
         const allTools = [...explicitTools];
-        // Add registered tools from registeredTools Map
-        for (const [name, toolDef] of registeredTools.entries()) {
-            // Check if a tool with this name already exists in explicitTools
-            if (!explicitTools.some(tool => tool.name === name)) {
-                allTools.push(toolDef);
+        // Add registered tools from registeredTools Map (only in developer mode)
+        if (developerMode) {
+            for (const [name, toolDef] of registeredTools.entries()) {
+                // Check if a tool with this name already exists in explicitTools
+                if (!explicitTools.some(tool => tool.name === name)) {
+                    allTools.push(toolDef);
+                }
             }
         }
         return {
