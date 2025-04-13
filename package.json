@@ -1,5 +1,5 @@
 {
-  "name": "openfoodfacts-mcp-server",
+  "name": "openfoodfacts-mcp",
   "version": "1.0.0",
   "description": "Model Context Protocol server for Open Food Facts",
   "main": "dist/index.js",
