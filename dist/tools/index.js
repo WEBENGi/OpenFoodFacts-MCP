@@ -3,6 +3,7 @@ import { searchProducts, getProductByBarcode } from "./product-search.js";
 import { registerAIAnalysisTools } from "./ai-analysis-tool.js";
 import { registerGitHubIssuesTools } from "./github-issues-tool.js";
 import { requestSampling, createRecipeSuggestionRequest } from "../sampling/sampling-service.js";
+import { logger } from '../transport/transports.js';
 // Track all tools registered via server.tool()
 // This will hold tool definitions from Set 2 tools
 const registeredTools = new Map();
@@ -133,7 +134,7 @@ async function findProduct(nameOrBarcode) {
             }
         }
         catch (error) {
-            console.error(`Error fetching product by barcode: ${error}`);
+            logger.error(`Error fetching product by barcode: ${error}`);
         }
     }
     // If not a barcode or barcode lookup failed, try product name search
@@ -149,13 +150,13 @@ async function findProduct(nameOrBarcode) {
                     return { product };
                 }
                 catch (error) {
-                    console.error(`Error fetching product details: ${error}`);
+                    logger.error(`Error fetching product details: ${error}`);
                 }
             }
         }
     }
     catch (error) {
-        console.error(`Error searching for product by name: ${error}`);
+        logger.error(`Error searching for product by name: ${error}`);
     }
     // If all lookups failed
     return null;
@@ -413,7 +414,7 @@ export function registerTools(server, developerMode = false) {
     // Handle tool execution
     server.server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
         const { name, arguments: args } = request.params;
-        console.log(`Tool call received: ${name} with args:`, args);
+        logger.info(`Tool call received: ${name} with args: ${JSON.stringify(args)}`);
         // Handle search products tool
         if (name === "searchProducts") {
             try {
@@ -429,7 +430,7 @@ export function registerTools(server, developerMode = false) {
                 };
             }
             catch (error) {
-                console.error("Error in searchProducts tool:", error);
+                logger.error("Error in searchProducts tool:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 return {
                     isError: true,
@@ -457,7 +458,7 @@ export function registerTools(server, developerMode = false) {
                 };
             }
             catch (error) {
-                console.error("Error in getProductByBarcode tool:", error);
+                logger.error("Error in getProductByBarcode tool:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 return {
                     isError: true,
@@ -486,7 +487,7 @@ export function registerTools(server, developerMode = false) {
                         ]
                     };
                 }
-                // Get product data using the new findProduct function
+                // Get product data using the findProduct function
                 const productData = await findProduct(nameOrBarcode);
                 if (!productData || !productData.product) {
                     return {
@@ -500,38 +501,86 @@ export function registerTools(server, developerMode = false) {
                         ]
                     };
                 }
-                const data = productData;
-                // Return AI analysis of the product
-                return {
-                    content: [
+                // Create a sampling request for detailed product analysis
+                const systemPrompt = "You are a nutritional expert specializing in analyzing food products. Provide a detailed analysis of the product based on the Open Food Facts data. Include: \n\n1. PRODUCT OVERVIEW: Basic details and classification\n2. NUTRITION ANALYSIS: Review of nutritional data and what it means for dietary considerations\n3. INGREDIENTS ASSESSMENT: Analysis of ingredients, highlighting potential concerns or benefits\n4. ALLERGENS & RESTRICTIONS: Information relevant to dietary restrictions and allergies\n5. HEALTH PERSPECTIVE: Overall assessment from a health and nutrition standpoint\n6. RECOMMENDATIONS: Suggestions for consumers regarding this product";
+                const samplingRequest = {
+                    messages: [
                         {
-                            type: "text",
-                            text: `Analysis of ${data.product.product_name || "Unknown Product"}:\n\n` +
-                                `Nutrition Grade: ${data.product.nutrition_grades || "Not available"}\n` +
-                                `Nutri-Score: ${data.product.nutriscore_grade || "Not available"}\n` +
-                                `Nutrition Score: ${data.product.nutriscore_score || "Not available"}\n` +
-                                `Nova Group (Processing Level): ${data.product.nova_group || "Not available"}\n\n` +
-                                `Key Nutrients (per 100g/100ml):\n` +
-                                `- Energy: ${data.product.nutriments?.energy || "Not available"} kcal\n` +
-                                `- Fat: ${data.product.nutriments?.fat || "Not available"}g\n` +
-                                `- Saturated Fat: ${data.product.nutriments?.["saturated-fat"] || "Not available"}g\n` +
-                                `- Carbohydrates: ${data.product.nutriments?.carbohydrates || "Not available"}g\n` +
-                                `- Sugars: ${data.product.nutriments?.sugars || "Not available"}g\n` +
-                                `- Fiber: ${data.product.nutriments?.fiber || "Not available"}g\n` +
-                                `- Proteins: ${data.product.nutriments?.proteins || "Not available"}g\n` +
-                                `- Salt: ${data.product.nutriments?.salt || "Not available"}g\n\n` +
-                                `Ingredients Analysis:\n` +
-                                `${data.product.ingredients_text || "Ingredients information not available"}\n\n` +
-                                `Potential Allergens:\n` +
-                                `${data.product.allergens_tags?.join(", ") || "Allergen information not available"}\n\n` +
-                                `Additives:\n` +
-                                `${data.product.additives_tags?.join(", ") || "Additive information not available"}`
+                            role: "user",
+                            content: {
+                                type: "text",
+                                text: `Analyze this product from the Open Food Facts database and provide a detailed nutritional assessment:\n\n${JSON.stringify(productData.product, null, 2)}`
+                            }
                         }
-                    ]
+                    ],
+                    modelPreferences: {
+                        hints: [
+                            { name: "claude-3" },
+                            { name: "gpt-4" }
+                        ],
+                        intelligencePriority: 0.9,
+                        speedPriority: 0.6,
+                        costPriority: 0.4
+                    },
+                    systemPrompt,
+                    includeContext: "thisServer",
+                    temperature: 0.3,
+                    maxTokens: 1500,
+                    stopSequences: ["[END]"]
                 };
+                try {
+                    // Request LLM completion through the client
+                    const aiResponse = await requestSampling(server, samplingRequest);
+                    // Basic product data as fallback header
+                    let productName = productData.product.product_name || "Unknown Product";
+                    let brand = productData.product.brands || "Unknown Brand";
+                    let nutriscore = productData.product.nutriscore_grade ? `Nutri-Score: ${productData.product.nutriscore_grade.toUpperCase()}` : "";
+                    let nova = productData.product.nova_group ? `NOVA Group: ${productData.product.nova_group}` : "";
+                    let headerInfo = `# ${productName} (${brand})\n`;
+                    if (nutriscore || nova) {
+                        headerInfo += `*${nutriscore}${nutriscore && nova ? ' • ' : ''}${nova}*\n\n`;
+                    }
+                    // Return the AI-generated analysis with a header
+                    return {
+                        content: [
+                            {
+                                type: "text",
+                                text: `${headerInfo}${aiResponse.content.text || "Analysis not available for this product."}`
+                            }
+                        ]
+                    };
+                }
+                catch (error) {
+                    logger.error("Error requesting AI product analysis:", error);
+                    // Fallback to basic product information display if AI analysis fails
+                    return {
+                        content: [
+                            {
+                                type: "text",
+                                text: `Analysis of ${productData.product.product_name || "Unknown Product"}:\n\n` +
+                                    `Product: ${productData.product.product_name || "N/A"}\n` +
+                                    `Brand: ${productData.product.brands || "N/A"}\n` +
+                                    `Nutri-Score: ${productData.product.nutriscore_grade?.toUpperCase() || "N/A"}\n` +
+                                    `Processing (NOVA): Group ${productData.product.nova_group || "N/A"}\n\n` +
+                                    `Nutrition Facts (per 100g/100ml):\n` +
+                                    `- Energy: ${productData.product.nutriments?.energy || "N/A"}\n` +
+                                    `- Fat: ${productData.product.nutriments?.fat || "N/A"}g\n` +
+                                    `- Saturated Fat: ${productData.product.nutriments?.["saturated-fat"] || "N/A"}g\n` +
+                                    `- Carbohydrates: ${productData.product.nutriments?.carbohydrates || "N/A"}g\n` +
+                                    `- Sugars: ${productData.product.nutriments?.sugars || "N/A"}g\n` +
+                                    `- Fiber: ${productData.product.nutriments?.fiber || "N/A"}g\n` +
+                                    `- Proteins: ${productData.product.nutriments?.proteins || "N/A"}g\n` +
+                                    `- Salt: ${productData.product.nutriments?.salt || "N/A"}g\n\n` +
+                                    `Ingredients: ${productData.product.ingredients_text || "N/A"}\n\n` +
+                                    `Allergens: ${productData.product.allergens || "None listed"}\n\n` +
+                                    `Countries: ${productData.product.countries || "N/A"}`
+                            }
+                        ]
+                    };
+                }
             }
             catch (error) {
-                console.error("Error in analyzeProduct tool:", error);
+                logger.error("Error in analyzeProduct tool:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 return {
                     isError: true,
@@ -599,53 +648,109 @@ export function registerTools(server, developerMode = false) {
                         ]
                     };
                 }
-                // Prepare comparison text
-                const comparison = `Comparison of ${data1.product.product_name || "Product 1"} vs ${data2.product.product_name || "Product 2"}:\n\n` +
-                    `NUTRITION GRADE:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutrition_grades || "Not available"}\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutrition_grades || "Not available"}\n\n` +
-                    `NUTRI-SCORE:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriscore_grade || "Not available"}\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriscore_grade || "Not available"}\n\n` +
-                    `PROCESSING LEVEL (NOVA):\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nova_group || "Not available"}\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nova_group || "Not available"}\n\n` +
-                    `NUTRITIONAL COMPARISON (per 100g/100ml):\n` +
-                    `CALORIES:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.energy || "Not available"} kcal\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.energy || "Not available"} kcal\n\n` +
-                    `FAT:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.fat || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.fat || "Not available"}g\n\n` +
-                    `SATURATED FAT:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.["saturated-fat"] || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.["saturated-fat"] || "Not available"}g\n\n` +
-                    `SUGARS:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.sugars || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.sugars || "Not available"}g\n\n` +
-                    `FIBER:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.fiber || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.fiber || "Not available"}g\n\n` +
-                    `PROTEINS:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.proteins || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.proteins || "Not available"}g\n\n` +
-                    `SALT:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.salt || "Not available"}g\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.salt || "Not available"}g\n\n` +
-                    `ADDITIVES COUNT:\n` +
-                    `${data1.product.product_name || "Product 1"}: ${data1.product.additives_tags?.length || "Not available"}\n` +
-                    `${data2.product.product_name || "Product 2"}: ${data2.product.additives_tags?.length || "Not available"}\n\n`;
-                return {
-                    content: [
+                // Create a sampling request for AI-powered product comparison
+                const systemPrompt = "You are a nutritional expert specializing in comparing food products. Provide a comprehensive comparison between two products based on their Open Food Facts data. Include the following sections:\n\n1. OVERVIEW: Brief introduction to both products and what they are\n2. NUTRITIONAL COMPARISON: Detailed side-by-side comparison of nutrients, highlighting significant differences\n3. INGREDIENTS COMPARISON: Analysis of ingredients lists, highlighting differences and similarities\n4. HEALTH RATING COMPARISON: Compare Nutri-Score, NOVA processing classification, and other health indicators\n5. DIETARY CONSIDERATIONS: Compare allergens, dietary restrictions compatibility (vegan, vegetarian, etc.)\n6. RECOMMENDATION: Which product might be preferable for different dietary needs and why";
+                const samplingRequest = {
+                    messages: [
                         {
-                            type: "text",
-                            text: comparison
+                            role: "user",
+                            content: {
+                                type: "text",
+                                text: `Compare these two food products from the Open Food Facts database and provide a detailed nutritional comparison:\n\nPRODUCT 1:\n${JSON.stringify(data1.product, null, 2)}\n\nPRODUCT 2:\n${JSON.stringify(data2.product, null, 2)}`
+                            }
                         }
-                    ]
+                    ],
+                    modelPreferences: {
+                        hints: [
+                            { name: "claude-3" },
+                            { name: "gpt-4" }
+                        ],
+                        intelligencePriority: 0.9,
+                        speedPriority: 0.5,
+                        costPriority: 0.4
+                    },
+                    systemPrompt,
+                    includeContext: "thisServer",
+                    temperature: 0.2,
+                    maxTokens: 2000,
+                    stopSequences: ["[END]"]
                 };
+                try {
+                    // Request LLM completion through the client
+                    const aiResponse = await requestSampling(server, samplingRequest);
+                    // Create a header with basic product info
+                    const product1Name = data1.product.product_name || "Product 1";
+                    const product2Name = data2.product.product_name || "Product 2";
+                    const product1Brand = data1.product.brands || "Unknown Brand";
+                    const product2Brand = data2.product.brands || "Unknown Brand";
+                    const product1NutriScore = data1.product.nutriscore_grade ? `Nutri-Score: ${data1.product.nutriscore_grade.toUpperCase()}` : "Nutri-Score: N/A";
+                    const product2NutriScore = data2.product.nutriscore_grade ? `Nutri-Score: ${data2.product.nutriscore_grade.toUpperCase()}` : "Nutri-Score: N/A";
+                    const headerInfo = `# Comparison: ${product1Name} vs ${product2Name}\n\n` +
+                        `**${product1Name}** (${product1Brand}) - ${product1NutriScore}\n` +
+                        `**${product2Name}** (${product2Brand}) - ${product2NutriScore}\n\n`;
+                    // Return the AI-generated comparison with a header
+                    return {
+                        content: [
+                            {
+                                type: "text",
+                                text: `${headerInfo}${aiResponse.content.text || "Comparison analysis not available."}`
+                            }
+                        ]
+                    };
+                }
+                catch (error) {
+                    logger.error("Error requesting AI product comparison:", error);
+                    // Fallback to basic comparison if AI analysis fails
+                    const basicComparison = `Comparison of ${data1.product.product_name || "Product 1"} vs ${data2.product.product_name || "Product 2"}:\n\n` +
+                        `NUTRITION GRADE:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutrition_grades || "N/A"}\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutrition_grades || "N/A"}\n\n` +
+                        `NUTRI-SCORE:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriscore_grade || "N/A"}\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriscore_grade || "N/A"}\n\n` +
+                        `PROCESSING LEVEL (NOVA):\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nova_group || "N/A"}\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nova_group || "N/A"}\n\n` +
+                        `NUTRITIONAL COMPARISON (per 100g/100ml):\n` +
+                        `CALORIES:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.energy || "N/A"} kcal\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.energy || "N/A"} kcal\n\n` +
+                        `FAT:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.fat || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.fat || "N/A"}g\n\n` +
+                        `SATURATED FAT:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.["saturated-fat"] || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.["saturated-fat"] || "N/A"}g\n\n` +
+                        `SUGARS:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.sugars || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.sugars || "N/A"}g\n\n` +
+                        `FIBER:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.fiber || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.fiber || "N/A"}g\n\n` +
+                        `PROTEINS:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.proteins || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.proteins || "N/A"}g\n\n` +
+                        `SALT:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.nutriments?.salt || "N/A"}g\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.nutriments?.salt || "N/A"}g\n\n` +
+                        `INGREDIENTS:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.ingredients_text || "N/A"}\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.ingredients_text || "N/A"}\n\n` +
+                        `ADDITIVES COUNT:\n` +
+                        `${data1.product.product_name || "Product 1"}: ${data1.product.additives_tags?.length || "N/A"}\n` +
+                        `${data2.product.product_name || "Product 2"}: ${data2.product.additives_tags?.length || "N/A"}`;
+                    return {
+                        content: [
+                            {
+                                type: "text",
+                                text: basicComparison
+                            }
+                        ]
+                    };
+                }
             }
             catch (error) {
-                console.error("Error in compareProducts tool:", error);
+                logger.error("Error in compareProducts tool:", error);
                 return {
                     isError: true,
                     content: [
@@ -702,7 +807,7 @@ export function registerTools(server, developerMode = false) {
                     };
                 }
                 catch (error) {
-                    console.error("Error requesting LLM recipes:", error);
+                    logger.error("Error requesting LLM recipes:", error);
                     return {
                         isError: true,
                         content: [
@@ -715,7 +820,7 @@ export function registerTools(server, developerMode = false) {
                 }
             }
             catch (error) {
-                console.error("Error in suggestRecipes tool:", error);
+                logger.error("Error in suggestRecipes tool:", error);
                 return {
                     isError: true,
                     content: [
@@ -826,7 +931,7 @@ export function registerTools(server, developerMode = false) {
                     };
                 }
                 catch (error) {
-                    console.error("Error fetching GitHub issue:", error);
+                    logger.error("Error fetching GitHub issue:", error);
                     return {
                         isError: true,
                         content: [
@@ -845,7 +950,7 @@ export function registerTools(server, developerMode = false) {
                 }
             }
             catch (error) {
-                console.error("Error in analyzeGitHubIssue tool:", error);
+                logger.error("Error in analyzeGitHubIssue tool:", error);
                 return {
                     isError: true,
                     content: [
@@ -978,7 +1083,7 @@ export function registerTools(server, developerMode = false) {
                     };
                 }
                 catch (error) {
-                    console.error("Error fetching GitHub issues by label:", error);
+                    logger.error("Error fetching GitHub issues by label:", error);
                     return {
                         isError: true,
                         content: [
@@ -996,7 +1101,7 @@ export function registerTools(server, developerMode = false) {
                 }
             }
             catch (error) {
-                console.error("Error in analyzeGitHubIssuesByLabel tool:", error);
+                logger.error("Error in analyzeGitHubIssuesByLabel tool:", error);
                 return {
                     isError: true,
                     content: [
@@ -1148,7 +1253,7 @@ export function registerTools(server, developerMode = false) {
                     };
                 }
                 catch (error) {
-                    console.error("Error fetching GitHub issues for roadmap:", error);
+                    logger.error("Error fetching GitHub issues for roadmap:", error);
                     return {
                         isError: true,
                         content: [
@@ -1172,7 +1277,7 @@ export function registerTools(server, developerMode = false) {
                 }
             }
             catch (error) {
-                console.error("Error in createGitHubIssueRoadmap tool:", error);
+                logger.error("Error in createGitHubIssueRoadmap tool:", error);
                 return {
                     isError: true,
                     content: [
@@ -1195,5 +1300,5 @@ export function registerTools(server, developerMode = false) {
             ]
         };
     });
-    console.log("Open Food Facts MCP tools registered successfully");
+    logger.info("Open Food Facts MCP tools registered successfully");
 }

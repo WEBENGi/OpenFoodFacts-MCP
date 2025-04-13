@@ -46,7 +46,7 @@ export async function searchProducts(query, page = 1, pageSize = 20) {
                 page_size: pageSize,
                 json: 1
             },
-            timeout: 10000 // 10 second timeout
+            timeout: 30000 // 30 second timeout
         });
         // Check if the response is valid
         if (!response.data || !Array.isArray(response.data.products)) {
@@ -96,7 +96,7 @@ export async function getProductByBarcode(barcode) {
         }
         // Make API request to Open Food Facts product API
         const response = await axios.get(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`, {
-            timeout: 10000 // 10 second timeout
+            timeout: 30000 // 30 second timeout
         });
         // Check if product was found
         if (response.data.status === 0) {

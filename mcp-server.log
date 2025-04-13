@@ -1,0 +1,167 @@
+2025-04-13T13:42:51.713Z - [INFO] Starting Open Food Facts MCP server...
+2025-04-13T13:42:51.714Z - [INFO] Mode: Standard (core tools only)
+2025-04-13T13:42:51.714Z - [INFO] Enabled capabilities:
+2025-04-13T13:42:51.714Z - [INFO] - Resources: Food product data access
+2025-04-13T13:42:51.714Z - [INFO] - Tools: Food product search and information
+2025-04-13T13:42:51.714Z - [INFO] - Prompts: Food product analysis templates
+2025-04-13T13:42:51.714Z - [INFO] - Sampling: AI-powered food product analysis
+2025-04-13T13:42:51.714Z - [INFO] - Roots: Resource boundary management
+2025-04-13T13:42:51.714Z - [INFO] Roots capability initialized
+2025-04-13T13:42:51.715Z - [INFO] Open Food Facts MCP tools registered successfully
+2025-04-13T13:42:51.715Z - [INFO] Open Food Facts MCP Server started with stdio transport
+2025-04-13T13:43:19.601Z - [INFO] Tool call received: searchProducts with args: {"query":"almond milk"}
+2025-04-13T13:43:29.649Z - [ERROR] Error searching products: AxiosError: timeout of 10000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T13:43:29.649Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T13:43:35.276Z - [INFO] Tool call received: searchProducts with args: {"query":"almond milk","page":10,"pageSize":10}
+2025-04-13T13:43:45.281Z - [ERROR] Error searching products: AxiosError: timeout of 10000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T13:43:45.282Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T13:47:09.946Z - [INFO] Starting Open Food Facts MCP server...
+2025-04-13T13:47:09.947Z - [INFO] Mode: Standard (core tools only)
+2025-04-13T13:47:09.947Z - [INFO] Enabled capabilities:
+2025-04-13T13:47:09.947Z - [INFO] - Resources: Food product data access
+2025-04-13T13:47:09.947Z - [INFO] - Tools: Food product search and information
+2025-04-13T13:47:09.947Z - [INFO] - Prompts: Food product analysis templates
+2025-04-13T13:47:09.947Z - [INFO] - Sampling: AI-powered food product analysis
+2025-04-13T13:47:09.947Z - [INFO] - Roots: Resource boundary management
+2025-04-13T13:47:09.947Z - [INFO] Roots capability initialized
+2025-04-13T13:47:09.948Z - [INFO] Open Food Facts MCP tools registered successfully
+2025-04-13T13:47:09.948Z - [INFO] Open Food Facts MCP Server started with stdio transport
+2025-04-13T13:47:15.308Z - [INFO] Tool call received: searchProducts with args: {"query":"almond milk","page":10,"pageSize":10}
+2025-04-13T13:48:02.171Z - [INFO] Starting Open Food Facts MCP server...
+2025-04-13T13:48:02.172Z - [INFO] Mode: Standard (core tools only)
+2025-04-13T13:48:02.172Z - [INFO] Enabled capabilities:
+2025-04-13T13:48:02.172Z - [INFO] - Resources: Food product data access
+2025-04-13T13:48:02.172Z - [INFO] - Tools: Food product search and information
+2025-04-13T13:48:02.172Z - [INFO] - Prompts: Food product analysis templates
+2025-04-13T13:48:02.172Z - [INFO] - Sampling: AI-powered food product analysis
+2025-04-13T13:48:02.172Z - [INFO] - Roots: Resource boundary management
+2025-04-13T13:48:02.172Z - [INFO] Roots capability initialized
+2025-04-13T13:48:02.173Z - [INFO] Open Food Facts MCP tools registered successfully
+2025-04-13T13:48:02.173Z - [INFO] Open Food Facts MCP Server started with stdio transport
+2025-04-13T13:48:41.974Z - [INFO] Tool call received: searchProducts with args: {"query":"almond milk","page":10,"pageSize":10}
+2025-04-13T13:49:04.711Z - [INFO] Tool call received: getProductByBarcode with args: {"barcode":"3017620422003"}
+2025-04-13T13:49:17.112Z - [INFO] Tool call received: getProductByBarcode with args: {"barcode":"8076809513326"}
+2025-04-13T13:49:35.694Z - [INFO] Tool call received: analyzeProduct with args: {"nameOrBarcode":"Nutella"}
+2025-04-13T13:50:13.931Z - [INFO] Tool call received: compareProducts with args: {"nameOrBarcode1":"3017620422003","nameOrBarcode2":"5000159407236"}
+2025-04-13T13:50:29.328Z - [INFO] Tool call received: compareProducts with args: {"nameOrBarcode1":"3017620422003","nameOrBarcode2":"500015940723"}
+2025-04-13T13:50:29.860Z - [ERROR] Error fetching product: Error: Product with barcode 500015940723 not found
+    at getProductByBarcode (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:103:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async findProduct (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:131:29)
+    at async Promise.all (index 1)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:575:40
+2025-04-13T13:50:29.861Z - [ERROR] Error fetching product by barcode: Error: Product with barcode 500015940723 not found
+2025-04-13T13:50:30.027Z - [ERROR] Error fetching product: Error: Product with barcode 500015940723 not found
+    at getProductByBarcode (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:103:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:17:33)
+    at async findProduct (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:142:25)
+    at async Promise.all (index 1)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:575:40
+2025-04-13T13:50:30.027Z - [INFO] Barcode lookup failed for 500015940723, falling back to search API: Error: Product with barcode 500015940723 not found
+2025-04-13T13:51:00.528Z - [INFO] Tool call received: compareProducts with args: {"nameOrBarcode1":"3017620422003","nameOrBarcode2":"5000159407236"}
+2025-04-13T13:51:23.362Z - [INFO] Tool call received: compareProducts with args: {"nameOrBarcode1":"3017620422003","nameOrBarcode2":"8076809513326"}
+2025-04-13T13:55:14.599Z - [INFO] Tool call received: suggestRecipes with args: {"nameOrBarcode":"5000159407236"}
+2025-04-13T14:02:21.655Z - [INFO] Starting Open Food Facts MCP server...
+2025-04-13T14:02:21.656Z - [INFO] Mode: Standard (core tools only)
+2025-04-13T14:02:21.656Z - [INFO] Enabled capabilities:
+2025-04-13T14:02:21.656Z - [INFO] - Resources: Food product data access
+2025-04-13T14:02:21.656Z - [INFO] - Tools: Food product search and information
+2025-04-13T14:02:21.656Z - [INFO] - Prompts: Food product analysis templates
+2025-04-13T14:02:21.656Z - [INFO] - Sampling: AI-powered food product analysis
+2025-04-13T14:02:21.656Z - [INFO] - Roots: Resource boundary management
+2025-04-13T14:02:21.657Z - [INFO] Roots capability initialized
+2025-04-13T14:02:21.657Z - [INFO] Open Food Facts MCP tools registered successfully
+2025-04-13T14:02:21.658Z - [INFO] Open Food Facts MCP Server started with stdio transport
+2025-04-13T14:02:34.732Z - [INFO] Tool call received: getProductByBarcode with args: {"barcode":"3017620422003"}
+2025-04-13T14:03:00.858Z - [INFO] Tool call received: searchProducts with args: {"query":"yogurt","page":10,"pageSize":10}
+2025-04-13T14:03:15.312Z - [INFO] Tool call received: searchProducts with args: {"query":"yogurt","page":10,"pageSize":10}
+2025-04-13T14:03:30.868Z - [ERROR] Error searching products: AxiosError: timeout of 30000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:03:30.869Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:03:45.320Z - [ERROR] Error searching products: AxiosError: timeout of 30000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:03:45.321Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:03:52.738Z - [INFO] Tool call received: searchProducts with args: {"query":"chocolate cereal","page":10,"pageSize":10}
+2025-04-13T14:04:22.744Z - [ERROR] Error searching products: AxiosError: timeout of 30000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:04:22.745Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:06:16.442Z - [INFO] Tool call received: searchProducts with args: {"query":"chocolate cereal","page":10,"pageSize":10}
+2025-04-13T14:06:46.465Z - [ERROR] Error searching products: AxiosError: timeout of 30000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:519:28)
+    at Timeout.<anonymous> (/Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+    at Axios.request (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/node_modules/axios/lib/core/Axios.js:45:41)
+    at async searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:42:26)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:06:46.465Z - [ERROR] Error in searchProducts tool: Error: Search request timed out. Please try again.
+    at searchProducts (file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/product-search.js:77:23)
+    at async file:///Users/jagjeevankashid/Developer/MCP/OpenFoodFacts-Mcp/dist/tools/index.js:422:33
+2025-04-13T14:08:56.695Z - [INFO] Starting Open Food Facts MCP server...
+2025-04-13T14:08:56.696Z - [INFO] Mode: Developer (all tools enabled)
+2025-04-13T14:08:56.696Z - [INFO] Enabled capabilities:
+2025-04-13T14:08:56.696Z - [INFO] - Resources: Food product data access
+2025-04-13T14:08:56.696Z - [INFO] - Tools: Food product search and information
+2025-04-13T14:08:56.696Z - [INFO] - Prompts: Food product analysis templates
+2025-04-13T14:08:56.696Z - [INFO] - Sampling: AI-powered food product analysis
+2025-04-13T14:08:56.696Z - [INFO] - Roots: Resource boundary management
+2025-04-13T14:08:56.696Z - [INFO] - Developer Tools: Code analysis, PR generation, and contributor assistance
+2025-04-13T14:08:56.696Z - [INFO] Roots capability initialized
+2025-04-13T14:08:56.697Z - [INFO] Open Food Facts MCP tools registered successfully
+2025-04-13T14:08:56.697Z - [INFO] Codebase Navigator tools registered successfully
+2025-04-13T14:08:56.697Z - [INFO] Issue Matcher tool registered successfully
+2025-04-13T14:08:56.697Z - [INFO] PR Generator tool registered successfully
+2025-04-13T14:08:56.697Z - [INFO] Test Case Generator tool registered successfully
+2025-04-13T14:08:56.697Z - [INFO] Git Workflow Helper tool registered successfully
+2025-04-13T14:08:56.697Z - [INFO] Developer mode enabled: Contributor tools registered
+2025-04-13T14:08:56.698Z - [INFO] Open Food Facts MCP Server started with stdio transport
+2025-04-13T14:10:28.821Z - [INFO] Tool call received: analyzeGitHubIssue with args: {"repo":"openfoodfacts-server","issueNumber":11756}

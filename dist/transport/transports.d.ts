@@ -1,6 +1,9 @@
 import express from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 export declare const logger: {
+    _stdioMode: boolean;
+    _logFile: string;
+    _writeToFile(message: string): void;
     log: (message: string) => void;
     info: (message: string) => void;
     warn: (message: string) => void;
