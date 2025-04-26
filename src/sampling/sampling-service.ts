@@ -2,7 +2,7 @@ import { CreateMessageResult } from "@modelcontextprotocol/sdk/types.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-// Define types for the sampling feature
+
 export interface SamplingRequest {
   messages: Array<{
     role: "user" | "assistant";
@@ -37,7 +37,6 @@ export interface SamplingRequest {
  * @returns The LLM completion response
  */
 
-// Zod schema to match CreateMessageResult type
 const CreateMessageResultSchema = z.object({
     model: z.string(),
     stopReason: z.string().optional(),
@@ -97,7 +96,12 @@ export function createProductAnalysisRequest(productData: any): SamplingRequest 
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.8,
       speedPriority: 0.5,
@@ -106,7 +110,7 @@ export function createProductAnalysisRequest(productData: any): SamplingRequest 
     systemPrompt: "You are a nutrition expert analyzing food product data. Provide detailed insights about the nutritional quality, ingredients, and potential health impacts of this product. Include information about allergens, additives, and nutrition scores where available.",
     includeContext: "thisServer",
     temperature: 0.2,
-    maxTokens: 800,
+    maxTokens: 2000,
     stopSequences: ["[END]"]
   };
 }
@@ -132,7 +136,12 @@ export function createProductComparisonRequest(product1Data: any, product2Data: 
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.9,
       speedPriority: 0.4,
@@ -141,7 +150,7 @@ export function createProductComparisonRequest(product1Data: any, product2Data: 
     systemPrompt: "You are a nutrition expert comparing food products. Analyze the nutritional information, ingredients, and additives of both products. Provide a clear comparison and determine which product is healthier based on nutritional content, processing level, additives, and overall quality.",
     includeContext: "thisServer",
     temperature: 0.1,
-    maxTokens: 1000,
+    maxTokens: 3000,
     stopSequences: ["[END]"]
   };
 }
@@ -175,7 +184,12 @@ export function createRecipeSuggestionRequest(productData: any): SamplingRequest
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.8,
       speedPriority: 0.5,
@@ -201,7 +215,7 @@ export function createRecipeSuggestionRequest(productData: any): SamplingRequest
     Present your response in a clean, organized format with clear headings and sections.`,
     includeContext: "thisServer",
     temperature: 0.7,
-    maxTokens: 1500,
+    maxTokens: 3500,
     stopSequences: ["[END]"]
   };
 }
@@ -241,7 +255,12 @@ export function createGitHubRoadmapRequest(
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.9,
       speedPriority: 0.3,
@@ -250,7 +269,7 @@ export function createGitHubRoadmapRequest(
     systemPrompt: `You are a product manager and technical lead for the Open Food Facts ${repo} repository. Create a prioritized ${timeframe}-term roadmap based on the provided GitHub issues. Include:\n\n1. EXECUTIVE SUMMARY: Brief overview of key priorities\n2. PRIORITY ISSUES: List of issues to address first with justification\n3. IMPLEMENTATION TIMELINE: Suggested schedule broken down by weeks/months\n4. RESOURCE REQUIREMENTS: Estimated developer hours and specialties needed\n5. DEPENDENCIES: How issues relate and depend on each other\n6. SUCCESS METRICS: How to measure successful implementation\n7. RISKS AND MITIGATIONS: Potential challenges and how to address them`,
     includeContext: "thisServer" as const,
     temperature: 0.4,
-    maxTokens: 2500,
+    maxTokens: 3500,
     stopSequences: ["[END]"]
   };
 }

@@ -224,7 +224,12 @@ function createIssueAnalysisRequest(issue: any, orgRepoContext: string) {
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.9,
       speedPriority: 0.5,
@@ -233,7 +238,7 @@ function createIssueAnalysisRequest(issue: any, orgRepoContext: string) {
     systemPrompt,
     includeContext: "thisServer" as const,
     temperature: 0.2,
-    maxTokens: 2000,
+    maxTokens: 4000,
     stopSequences: ["[END]"]
   };
 }
@@ -344,7 +349,12 @@ function createIssuesPatternAnalysisRequest(issues: any[], orgRepoContext: strin
     modelPreferences: {
       hints: [
         { name: "claude-3" },
-        { name: "gpt-4" }
+        { name: "gemini-2.0-flash" },
+        { name: "gemini-2.0" },
+        { name: "gemini-2.5-pro" },
+        { name: "sonnet" },
+        { name: "gpt-4.1" },
+        { name: "gpt-4o" }
       ],
       intelligencePriority: 0.9,
       speedPriority: 0.4,
@@ -353,7 +363,7 @@ function createIssuesPatternAnalysisRequest(issues: any[], orgRepoContext: strin
     systemPrompt,
     includeContext: "thisServer" as const,
     temperature: 0.3,
-    maxTokens: 2000,
+    maxTokens: 4000,
     stopSequences: ["[END]"]
   };
 }

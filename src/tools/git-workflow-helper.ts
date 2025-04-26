@@ -55,14 +55,22 @@ Please provide:
                         }
                     }],
                     modelPreferences: {
-                        hints: [{ name: "claude-3" }, { name: "gpt-4" }],
+                        hints: [
+                            { name: "claude-3" },
+                            { name: "gemini-2.0-flash" },
+                            { name: "gemini-2.0" },
+                            { name: "gemini-2.5-pro" },
+                            { name: "sonnet" },
+                            { name: "gpt-4.1" },
+                            { name: "gpt-4o" }
+                        ],
                         intelligencePriority: 0.7,
                         speedPriority: 0.7
                     },
                     systemPrompt,
                     includeContext: "thisServer" as const,
                     temperature: 0.2,
-                    maxTokens: 2000
+                    maxTokens: 4000
                 };
 
                 const aiResponse = await requestSampling(server, samplingRequest);

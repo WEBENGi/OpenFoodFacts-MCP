@@ -12,7 +12,7 @@ import {
  */
 async function searchProduct(barcode: string) {
   try {
-    const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
     if (!response.ok) {
       throw new Error(`Failed to fetch product data: ${response.statusText}`);
     }

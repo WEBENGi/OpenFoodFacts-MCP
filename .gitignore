@@ -1,0 +1,54 @@
+# macOS
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.history/
+.idea/
+*.iml
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.cache/
+.vite/
+dist/
+build/
+
+# Environment files
+.env
+.env.*.local
+
+# Test coverage
+coverage/
+*.lcov
+
+# Optional caches
+.npm
+.eslintcache
+
+# Dependency dirs
+jspm_packages/
+
+# .NET build outputs
+bin/
+obj/
+*/bin/
+*/obj/
+
+# Visual Studio user files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln
+*.sln.docstates
+
+# Test results
+TestResults/
+*.trx
+*.TestResults/
+
