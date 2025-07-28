@@ -114,6 +114,12 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
         const sessionId = req.query.sessionId || req.body.sessionId;
         logger.info(`[POST /messages] sessionId: ${sessionId}`);
         if (transport) {
+          // Check if the SSE stream is writable/readable
+          if (typeof transport.res?.writable !== 'undefined' && !transport.res.writable) {
+            logger.error('SSE stream is not writable (closed or errored)');
+            res.status(500).send('SSE stream is not writable (closed or errored)');
+            return;
+          }
           try {
             transport.handlePostMessage(req, res);
           } catch (err) {
@@ -126,11 +132,11 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
         }
       });
 
-      app.get('/', (_: express.Request, res: express.Response) => {
+      app.get('/', (_, res) => {
         res.send('Open Food Facts MCP Server is running');
       });
 
-      app.get('/health', (_: express.Request, res: express.Response) => {
+      app.get('/health', (_, res) => {
         res.json({ status: 'UP', version: '1.0.0' });
       });
 
