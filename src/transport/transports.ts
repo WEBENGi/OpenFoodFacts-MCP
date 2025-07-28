@@ -92,10 +92,7 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
         res.setHeader("Access-Control-Allow-Origin", "*");
         
         transport = new SSEServerTransport("/messages", res);
-        logger.info("SSE connection established");
-        res.on("error", (err) => {
-          logger.error("SSE stream error:", err);
-        });
+        
         res.on("close", () => {
           logger.info("SSE connection closed");
           transport = null;
@@ -108,26 +105,9 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
       });
 
       app.post("/messages", express.json(), (req, res) => {
-        logger.info(`[POST /messages] Headers: ${JSON.stringify(req.headers)}`);
-        logger.info(`[POST /messages] Body: ${JSON.stringify(req.body)}`);
-        // Check for sessionId in query
-        const sessionId = req.query.sessionId || req.body.sessionId;
-        logger.info(`[POST /messages] sessionId: ${sessionId}`);
         if (transport) {
-          // Check if the SSE stream is writable/readable
-          if (typeof transport.res?.writable !== 'undefined' && !transport.res.writable) {
-            logger.error('SSE stream is not writable (closed or errored)');
-            res.status(500).send('SSE stream is not writable (closed or errored)');
-            return;
-          }
-          try {
-            transport.handlePostMessage(req, res);
-          } catch (err) {
-            logger.error('Error handling POST /messages:', err);
-            res.status(500).send('Error handling POST /messages: ' + (err instanceof Error ? err.message : String(err)));
-          }
+          transport.handlePostMessage(req, res);
         } else {
-          logger.error('No active SSE connection found for POST /messages');
           res.status(400).send('No active SSE connection found');
         }
       });
