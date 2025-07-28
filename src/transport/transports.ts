@@ -92,9 +92,12 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
         res.setHeader("Access-Control-Allow-Origin", "*");
         
         transport = new SSEServerTransport("/messages", res);
-        
+        logger.info(`SSE connection established from IP: ${req.ip}, user-agent: ${req.headers['user-agent']}`);
+        res.on("error", (err) => {
+          logger.error(`SSE stream error from IP: ${req.ip}, user-agent: ${req.headers['user-agent']}`, err);
+        });
         res.on("close", () => {
-          logger.info("SSE connection closed");
+          logger.info(`SSE connection closed from IP: ${req.ip}, user-agent: ${req.headers['user-agent']}`);
           transport = null;
         });
         
@@ -105,9 +108,20 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
       });
 
       app.post("/messages", express.json(), (req, res) => {
+        logger.info(`[POST /messages] Headers: ${JSON.stringify(req.headers)}`);
+        logger.info(`[POST /messages] Body: ${JSON.stringify(req.body)}`);
+        // Check for sessionId in query
+        const sessionId = req.query.sessionId || req.body.sessionId;
+        logger.info(`[POST /messages] sessionId: ${sessionId}, from IP: ${req.ip}, user-agent: ${req.headers['user-agent']}`);
         if (transport) {
-          transport.handlePostMessage(req, res);
+          try {
+            transport.handlePostMessage(req, res);
+          } catch (err) {
+            logger.error('Error handling POST /messages:', err);
+            res.status(500).send('Error handling POST /messages: ' + (err instanceof Error ? err.message : String(err)));
+          }
         } else {
+          logger.error(`No active SSE connection found for POST /messages from IP: ${req.ip}, user-agent: ${req.headers['user-agent']}`);
           res.status(400).send('No active SSE connection found');
         }
       });
