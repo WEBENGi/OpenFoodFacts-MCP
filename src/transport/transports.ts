@@ -115,7 +115,6 @@ export function setupHttpTransport(server: McpServer, app: express.Application):
         logger.info(`[POST /messages] sessionId: ${sessionId}`);
         if (transport) {
           try {
-
             transport.handlePostMessage(req, res);
           } catch (err) {
             logger.error('Error handling POST /messages:', err);
